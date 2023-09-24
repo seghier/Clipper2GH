@@ -132,7 +132,7 @@ namespace ClipperTwo
             endtype %= 5;
             jointtype %= 3;
 
-            ClipperOffsetPoly(curves, distance, jointtype, endtype, miter);
+            ClipperOffsetPoly(curves, distance*2, jointtype, endtype, miter);
 
             //DA.SetDataList(0, resultCurve);
             DA.SetDataList(0, holeCurves);
