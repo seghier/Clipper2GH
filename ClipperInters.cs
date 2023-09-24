@@ -43,7 +43,7 @@ namespace ClipperTwo
             ruleC.Checked = (rule == 2);
             ruleD.Checked = (rule == 3);
 
-            #region scale factor
+            #region precision
             Menu_AppendSeparator(menu);
             TableLayoutPanel tableLayoutPanel = new TableLayoutPanel
             {
@@ -62,7 +62,7 @@ namespace ClipperTwo
                 Anchor = AnchorStyles.Right
             };
 
-            NumericUpDown numericUpDown2 = new NumericUpDown
+            NumericUpDown numericUpDown = new NumericUpDown
             {
                 Minimum = 2,
                 Maximum = 8,
@@ -73,17 +73,17 @@ namespace ClipperTwo
                 Anchor = AnchorStyles.Left
             };
             tableLayoutPanel.Controls.Add(label, 0, 0);
-            tableLayoutPanel.Controls.Add(numericUpDown2, 1, 0);
+            tableLayoutPanel.Controls.Add(numericUpDown, 1, 0);
             Menu_AppendCustomItem(menu, tableLayoutPanel);
 
-            numericUpDown2.MouseWheel += (sender, e) =>
+            numericUpDown.MouseWheel += (sender, e) =>
             {
                 ((HandledMouseEventArgs)e).Handled = true;
             };
 
-            numericUpDown2.ValueChanged += (sender, e) =>
+            numericUpDown.ValueChanged += (sender, e) =>
             {
-                precision = (int)numericUpDown2.Value;
+                precision = (int)numericUpDown.Value;
                 ExpireSolution(true);
             };
             #endregion

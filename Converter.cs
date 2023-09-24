@@ -41,8 +41,7 @@ namespace ClipperTwo
 
             foreach (Curve curve in curves)
             {
-                Polyline polyline;
-                curve.TryGetPolyline(out polyline);
+                curve.TryGetPolyline(out Polyline polyline);
 
                 PathD path = new PathD();
 
@@ -60,8 +59,7 @@ namespace ClipperTwo
         public static PathsD ConvertPolylinesB(Curve curve)
         {
 
-            Polyline polyline;
-            curve.TryGetPolyline(out polyline);
+            curve.TryGetPolyline(out Polyline polyline);
 
             PathD path = new PathD();
             PathsD pathsD = new PathsD();

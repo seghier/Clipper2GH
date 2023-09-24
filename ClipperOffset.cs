@@ -20,18 +20,14 @@ namespace ClipperTwo
         {
         }
 
-        public bool preserveCollinear = false;
-        public bool reverseSolution = false;
         int precision = 4;
 
         public override void AppendAdditionalMenuItems(ToolStripDropDown menu)
         {
             base.AppendAdditionalMenuItems(menu);
             Menu_AppendSeparator(menu);
-            //ToolStripMenuItem collinear = Menu_AppendItem(menu, "Preserve Collinear", PresCollinear, true, preserveCollinear);
-            //ToolStripMenuItem reverse = Menu_AppendItem(menu, "Reverse Solution", RevSolution, true, reverseSolution);
 
-            #region scale factor
+            #region precision
             Menu_AppendSeparator(menu);
             TableLayoutPanel tableLayoutPanel = new TableLayoutPanel
             {
@@ -50,7 +46,7 @@ namespace ClipperTwo
                 Anchor = AnchorStyles.Right
             };
 
-            NumericUpDown numericUpDown2 = new NumericUpDown
+            NumericUpDown numericUpDown = new NumericUpDown
             {
                 Minimum = 2,
                 Maximum = 8,
@@ -62,33 +58,21 @@ namespace ClipperTwo
             };
 
             tableLayoutPanel.Controls.Add(label, 0, 0);
-            tableLayoutPanel.Controls.Add(numericUpDown2, 1, 0);
+            tableLayoutPanel.Controls.Add(numericUpDown, 1, 0);
             Menu_AppendCustomItem(menu, tableLayoutPanel);
 
-            numericUpDown2.MouseWheel += (sender, e) =>
+            numericUpDown.MouseWheel += (sender, e) =>
             {
                 ((HandledMouseEventArgs)e).Handled = true;
             };
 
-            numericUpDown2.ValueChanged += (sender, e) =>
+            numericUpDown.ValueChanged += (sender, e) =>
             {
-                precision = (int)numericUpDown2.Value;
+                precision = (int)numericUpDown.Value;
                 ExpireSolution(true);
             };
 
             #endregion
-        }
-
-        public void PresCollinear(Object sender, EventArgs e)
-        {
-            preserveCollinear = !preserveCollinear;
-            ExpireSolution(true);
-        }
-
-        public void RevSolution(Object sender, EventArgs e)
-        {
-            reverseSolution = !reverseSolution;
-            ExpireSolution(true);
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
@@ -206,21 +190,12 @@ namespace ClipperTwo
             if (reader.ItemExists("Precision"))
                 precision = reader.GetInt32("Precision");
 
-            if (reader.ItemExists("PreservCollinear"))
-                preserveCollinear = reader.GetBoolean("PreservCollinear");
-
-            if (reader.ItemExists("ReverseSolution"))
-                reverseSolution = reader.GetBoolean("ReverseSolution");
-
             return base.Read(reader);
         }
 
         public override bool Write(GH_IWriter writer)
         {
             writer.SetInt32("Precision", precision);
-            writer.SetBoolean("PreservCollinear", preserveCollinear);
-            writer.SetBoolean("ReverseSolution", reverseSolution);
-
             return base.Write(writer);
         }
     }

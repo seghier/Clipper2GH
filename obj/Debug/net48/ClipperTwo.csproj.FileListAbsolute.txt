@@ -1,0 +1,13 @@
+C:\Users\archi\source\repos\Clipper2GH\bin\Debug\net48\ClipperTwo.gha
+C:\Users\archi\source\repos\Clipper2GH\bin\Debug\net48\ClipperTwo.pdb
+C:\Users\archi\source\repos\Clipper2GH\bin\Debug\net48\Clipper2Lib.dll
+C:\Users\archi\source\repos\Clipper2GH\obj\Debug\net48\ClipperTwo.csproj.AssemblyReference.cache
+C:\Users\archi\source\repos\Clipper2GH\obj\Debug\net48\ClipperTwo.Properties.Resources.resources
+C:\Users\archi\source\repos\Clipper2GH\obj\Debug\net48\ClipperTwo.csproj.GenerateResource.cache
+C:\Users\archi\source\repos\Clipper2GH\obj\Debug\net48\ClipperTwo.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\archi\source\repos\Clipper2GH\obj\Debug\net48\ClipperTwo.AssemblyInfoInputs.cache
+C:\Users\archi\source\repos\Clipper2GH\obj\Debug\net48\ClipperTwo.AssemblyInfo.cs
+C:\Users\archi\source\repos\Clipper2GH\obj\Debug\net48\ClipperTwo.csproj.CoreCompileInputs.cache
+C:\Users\archi\source\repos\Clipper2GH\obj\Debug\net48\ClipperTwo.csproj.CopyComplete
+C:\Users\archi\source\repos\Clipper2GH\obj\Debug\net48\ClipperTwo.gha
+C:\Users\archi\source\repos\Clipper2GH\obj\Debug\net48\ClipperTwo.pdb
