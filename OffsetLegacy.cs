@@ -11,23 +11,27 @@ using System.Windows.Forms;
 
 namespace ClipperTwo
 {
-    public class ClipperOffsetComponent : GH_Component
+    public class ClipperOffsetLegacy: GH_Component
     {
-        public ClipperOffsetComponent()
-          : base("Clipper2 Offset", "C2Offset",
+        public ClipperOffsetLegacy()
+          : base("Clipper Offset", "ClipperOffset",
               "",
-              "Curve", "Clipper2")
+              "Display", "Wizard")
         {
         }
 
-        int precision = 4;
+        public bool preserveCollinear = false;
+        public bool reverseSolution = false;
+        double scaleFactor = 1000;
 
         public override void AppendAdditionalMenuItems(ToolStripDropDown menu)
         {
             base.AppendAdditionalMenuItems(menu);
             Menu_AppendSeparator(menu);
+            ToolStripMenuItem collinear = Menu_AppendItem(menu, "Preserve Collinear", PresCollinear, true, preserveCollinear);
+            ToolStripMenuItem reverse = Menu_AppendItem(menu, "Reverse Solution", RevSolution, true, reverseSolution);
 
-            #region precision
+            #region scale factor
             Menu_AppendSeparator(menu);
             TableLayoutPanel tableLayoutPanel = new TableLayoutPanel
             {
@@ -48,10 +52,10 @@ namespace ClipperTwo
 
             NumericUpDown numericUpDown = new NumericUpDown
             {
-                Minimum = 2,
-                Maximum = 8,
+                Minimum = 1,
+                Maximum = 100000,
                 DecimalPlaces = 0,
-                Value = precision,
+                Value = (decimal)scaleFactor,
                 Increment = 1,
                 Width = 60,
                 Anchor = AnchorStyles.Left
@@ -68,14 +72,25 @@ namespace ClipperTwo
 
             numericUpDown.ValueChanged += (sender, e) =>
             {
-                precision = (int)numericUpDown.Value;
+                scaleFactor = Convert.ToDouble(numericUpDown.Value);
                 ExpireSolution(true);
             };
-
             #endregion
         }
 
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        public void PresCollinear(Object sender, EventArgs e)
+        {
+            preserveCollinear = !preserveCollinear;
+            ExpireSolution(true);
+        }
+
+        public void RevSolution(Object sender, EventArgs e)
+        {
+            reverseSolution = !reverseSolution;
+            ExpireSolution(true);
+        }
+
+        protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddCurveParameter("Polylines", "", "", GH_ParamAccess.list);
             pManager.AddNumberParameter("Distance", "", "", GH_ParamAccess.item, 0.0);
@@ -132,7 +147,7 @@ namespace ClipperTwo
             endtype %= 5;
             jointtype %= 3;
 
-            ClipperOffsetPoly(curves, distance*2, jointtype, endtype, miter);
+            ClipperOffsetPoly(curves, distance, jointtype, endtype, miter);
 
             //DA.SetDataList(0, resultCurve);
             DA.SetDataList(0, holeCurves);
@@ -148,20 +163,46 @@ namespace ClipperTwo
             resultCurve.Clear();
             holeCurves.Clear();
             outCurves.Clear();
+            double arcTolerance = 0;
+            Paths64 paths = ConvertPolyline(curves, scaleFactor);
+            ClipperOffset offset = new ClipperOffset(miterLimit, arcTolerance, preserveCollinear, reverseSolution);
+            offset.AddPaths(paths, JoinTypes[jointype], EndTypes[endtype]);
+            Paths64 solution = new Paths64();
+            offset.Execute(distance * scaleFactor, solution);
 
-            PathsD pathsD = Converter.ConvertPolylinesA(curves);
-
-            PathsD solutionD = new PathsD();
-            solutionD = Clipper.InflatePaths(pathsD, distance, JoinTypes[jointype], EndTypes[endtype], miterLimit, precision);
-            foreach (PathD path in solutionD)
+            foreach (Path64 path in solution)
             {
-                Polyline polyline = new Polyline(path.Select(p => new Point3d(p.x, p.y, 0)));
+                Polyline polyline = new Polyline(path.Select(p => new Point3d(p.X / scaleFactor, p.Y / scaleFactor, 0)));
                 polyline.Add(polyline[0]);
                 if (Clipper.IsPositive(path))
                     outCurves.Add(polyline.ToNurbsCurve());
                 else
                     holeCurves.Add(polyline.ToNurbsCurve());
             }
+        }
+
+        Paths64 ConvertPolyline(List<Curve> curves, double scaleFactor)
+        {
+            Paths64 paths = new Paths64();
+
+            foreach (Curve curve in curves)
+            {
+                Polyline polyline;
+                curve.TryGetPolyline(out polyline);
+
+                Path64 path = new Path64();
+
+                foreach (Point3d point in polyline)
+                {
+                    long scaledX = (long)(point.X * scaleFactor);
+                    long scaledY = (long)(point.Y * scaleFactor);
+                    path.Add(new Point64(scaledX, scaledY));
+                }
+
+                paths.Add(path);
+            }
+
+            return paths;
         }
 
         List<JoinType> JoinTypes = new List<JoinType>()
@@ -182,19 +223,26 @@ namespace ClipperTwo
 
         protected override System.Drawing.Bitmap Icon => Properties.Resources.clipper;
 
-        public override Guid ComponentGuid => new Guid("ECC627E4-F10E-4013-81D9-8278C4D5F8E1");
+        public override GH_Exposure Exposure => GH_Exposure.quarternary;
+
+        public override Guid ComponentGuid => new Guid("561F54F5-5851-48E1-9607-66E15609BD4A");
 
         public override bool Read(GH_IReader reader)
         {
-            if (reader.ItemExists("Precision"))
-                precision = reader.GetInt32("Precision");
+            if (reader.ItemExists("PreservCollinear"))
+                preserveCollinear = reader.GetBoolean("PreservCollinear");
+
+            if (reader.ItemExists("ReverseSolution"))
+                reverseSolution = reader.GetBoolean("ReverseSolution");
 
             return base.Read(reader);
         }
 
         public override bool Write(GH_IWriter writer)
         {
-            writer.SetInt32("Precision", precision);
+            writer.SetBoolean("PreservCollinear", preserveCollinear);
+            writer.SetBoolean("ReverseSolution", reverseSolution);
+
             return base.Write(writer);
         }
     }

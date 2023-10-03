@@ -11,6 +11,10 @@
     <PackageProjectUrl>http://www.angusj.com/clipper2</PackageProjectUrl>
     <RepositoryUrl>https://github.com/AngusJohnson/Clipper2</RepositoryUrl>
   </PropertyGroup>
+	
+  <ItemGroup>
+    <Compile Remove="OffsetLegacy.cs" />
+  </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="Clipper2" Version="1.2.2" />

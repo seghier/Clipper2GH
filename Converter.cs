@@ -1,6 +1,7 @@
 ﻿using Clipper2Lib;
 using Rhino.Geometry;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ClipperTwo
 {
@@ -8,13 +9,12 @@ namespace ClipperTwo
     {
         public static PathD ConvertPolyline(Curve curve)
         {
-            curve.TryGetPolyline(out Polyline polyline);
-            PathD path = new PathD();
-            foreach (Point3d point in polyline)
+
+            if (curve.TryGetPolyline(out Polyline polyline))
             {
-                path.Add(new PointD(point.X, point.Y));
+                return new PathD(polyline.Select(point => new PointD(point.X, point.Y)));
             }
-            return path;
+            return new PathD();
         }
 
         public static RectD ConvertRectangle(Rectangle3d rectangle)
@@ -41,16 +41,11 @@ namespace ClipperTwo
 
             foreach (Curve curve in curves)
             {
-                curve.TryGetPolyline(out Polyline polyline);
-
-                PathD path = new PathD();
-
-                foreach (Point3d point in polyline)
+                if (curve.TryGetPolyline(out Polyline polyline))
                 {
-                    path.Add(new PointD(point.X, point.Y));
+                    PathD path = new PathD(polyline.Select(point => new PointD(point.X, point.Y)));
+                    pathsD.Add(path);
                 }
-
-                pathsD.Add(path);
             }
 
             return pathsD;
@@ -58,21 +53,16 @@ namespace ClipperTwo
 
         public static PathsD ConvertPolylinesB(Curve curve)
         {
-
-            curve.TryGetPolyline(out Polyline polyline);
-
-            PathD path = new PathD();
-            PathsD pathsD = new PathsD();
-
-            foreach (Point3d point in polyline)
+            Polyline polyline;
+            if (!curve.TryGetPolyline(out polyline))
             {
-                path.Add(new PointD(point.X, point.Y));
+                return new PathsD(); // Return an empty PathsD if the conversion fails.
             }
 
-            pathsD.Add(path);
+            PathD path = new PathD(polyline.Select(point => new PointD(point.X, point.Y)));
+            PathsD pathsD = new PathsD { path }; // Initialize PathsD with the path.
 
             return pathsD;
         }
-
     }
 }
