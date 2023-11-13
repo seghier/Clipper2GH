@@ -130,8 +130,20 @@
   <data name="clipshapes" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\clipshapes.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="clpoly" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\clpoly.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="minsum" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\minsum.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="offvar" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\offvar.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ptin" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ptin.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="readf" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\readf.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="union" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\union.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

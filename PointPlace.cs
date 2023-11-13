@@ -5,16 +5,15 @@ using Rhino.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace ClipperTwo
 {
-    public class ClipLinesComponent : GH_Component
+    public class PointInPolygonComponent : GH_Component
     {
-        public ClipLinesComponent()
-          : base("Clipper2 Rectangle Clip Lines", "C2RectClipLines",
-              "Don't rotate the rectagnle",
+        public PointInPolygonComponent()
+          : base("Clipper2 Point In Polyline", "PtInPoly",
+              "",
               "Curve", "Clipper2")
         {
         }
@@ -55,6 +54,7 @@ namespace ClipperTwo
                 Width = 60,
                 Anchor = AnchorStyles.Left
             };
+
             tableLayoutPanel.Controls.Add(label, 0, 0);
             tableLayoutPanel.Controls.Add(numericUpDown, 1, 0);
             Menu_AppendCustomItem(menu, tableLayoutPanel);
@@ -69,96 +69,87 @@ namespace ClipperTwo
                 precision = (int)numericUpDown.Value;
                 ExpireSolution(true);
             };
+
             #endregion
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddCurveParameter("Lines", "", "", GH_ParamAccess.list);
-            pManager.AddRectangleParameter("Rectangle", "", "", GH_ParamAccess.item);
+            pManager.AddCurveParameter("Polyline", "", "", GH_ParamAccess.item);
+            pManager.AddPointParameter("Points", "", "", GH_ParamAccess.list);
             pManager[0].Optional = true;
             pManager[1].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Result", "", "Result", GH_ParamAccess.list);
+            pManager.AddPointParameter("On", "", "", GH_ParamAccess.list);
+            pManager.AddPointParameter("Inside", "", "", GH_ParamAccess.list);
+            pManager.AddPointParameter("Outside", "", "", GH_ParamAccess.list);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            List<Curve> curves = new List<Curve>();
-            Rectangle3d rectangle = Rectangle3d.Unset;
+            Curve curve = null;
+            List<Point3d> points = new List<Point3d>();
 
-            if (!DA.GetDataList(0, curves)) return;
-            foreach (Curve curve in curves)
+            if (!DA.GetData(0, ref curve)) return;
+            if (!DA.GetDataList(1, points)) return;
+
+            PointInPoly(curve, points);
+
+            DA.SetDataList(1, pointsOn);
+            DA.SetDataList(2, pointsInside);
+            DA.SetDataList(3, pointsOustside);
+        }
+
+        List<Point3d> pointsOn = new List<Point3d>();
+        List<Point3d> pointsInside = new List<Point3d>();
+        List<Point3d> pointsOustside = new List<Point3d>();
+
+        void PointInPoly(Curve curve, List<Point3d> points)
+        {
+            pointsOn.Clear();
+            pointsInside.Clear();
+            pointsOustside.Clear();
+
+            List<PointD> pts = Converter.ConvertPointD(points); ;
+            PathD polygon = Converter.ConvertPolyline(curve);
+
+            foreach (PointD pt in pts)
             {
-                if (!curve.IsLinear() || !curve.IsValid)
+                var result = Clipper.PointInPolygon(pt, polygon, precision);
+
+                if (result == PointInPolygonResult.IsOn)
                 {
-                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, $"Choose a valid lines");
-                    return;
+                    pointsOn.Add(new Point3d(pt.x, pt.y, 0));
+                }
+                else if (result == PointInPolygonResult.IsInside)
+                {
+                    pointsInside.Add(new Point3d(pt.x, pt.y, 0));
+                }
+                else if (result == PointInPolygonResult.IsOutside)
+                {
+                    pointsOustside.Add(new Point3d(pt.x, pt.y, 0));
                 }
             }
-            if (!DA.GetData(1, ref rectangle)) return;
-
-            List<Curve> newcurves = new List<Curve>();
-            var mirror = Transform.Mirror(Plane.WorldZX);
-            rectangle.Transform(mirror);
-
-            foreach (Curve curve in curves)
-            {
-                curve.Transform(mirror);
-                newcurves.Add(curve);
-            }
-
-            ClipLinesGh(curves, rectangle);
-
-            List<Curve> newresultCurve = new List<Curve>();
-            foreach (Curve curve in resultCurve)
-            {
-                curve.Transform(mirror);
-                newresultCurve.Add(curve);
-            }
-
-            DA.SetDataList(0, resultCurve);
         }
 
-        List<Curve> resultCurve = new List<Curve>();
+        protected override System.Drawing.Bitmap Icon => Properties.Resources.ptin;
 
-        void ClipLinesGh(List<Curve> curves, Rectangle3d rectangle)
-        {
-            resultCurve.Clear();
-
-            PathsD paths = Converter.ConvertPolylinesA1(curves);
-            RectD rect = Converter.ConvertRectangle(rectangle);
-            PathsD cliprect;
-
-            cliprect = Clipper.RectClipLines(rect, paths, precision);
-
-            foreach (var path in cliprect)
-            {
-                Polyline polyline = new Polyline(path.Select(p => new Point3d(p.x, p.y, 0)));
-                polyline.Add(polyline[0]);
-                resultCurve.Add(polyline.ToNurbsCurve());
-            }
-        }
-
-        protected override System.Drawing.Bitmap Icon => Properties.Resources.cliplines;
-
-        public override Guid ComponentGuid => new Guid("CD07B722-F148-4947-9B6C-EC09DEF4A5E1");
+        public override Guid ComponentGuid => new Guid("7A1C1B74-3D55-437E-973C-9DC35FB29826");
 
         public override bool Read(GH_IReader reader)
         {
-            if (reader.ItemExists("Precision"))
-                precision = reader.GetInt32("Precision");
+            if (reader.ItemExists("PrecisionPt"))
+                precision = reader.GetInt32("PrecisionPt");
 
             return base.Read(reader);
         }
 
         public override bool Write(GH_IWriter writer)
         {
-            writer.SetInt32("Precision", precision);
-
+            writer.SetInt32("PrecisionPt", precision);
             return base.Write(writer);
         }
     }

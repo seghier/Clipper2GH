@@ -1,7 +1,7 @@
-﻿
-using Clipper2Lib;
+﻿using Clipper2Lib;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Parameters;
 using Rhino.Geometry;
 using System;
 using System.Collections.Generic;
@@ -79,7 +79,15 @@ namespace ClipperTwo
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddCurveParameter("Polylines", "", "", GH_ParamAccess.list);
+            pManager.AddIntegerParameter("Union Rule", "", "", GH_ParamAccess.item, 0);
             pManager[0].Optional = true;
+            if (!(pManager[1] is Param_Integer paramInteger1))
+                return;
+            paramInteger1.AddNamedValue("NonZero", 0);
+            paramInteger1.AddNamedValue("EvenOdd", 1);
+            paramInteger1.AddNamedValue("Negative", 2);
+            paramInteger1.AddNamedValue("Positive", 3);
+
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -89,9 +97,11 @@ namespace ClipperTwo
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            List<Curve> curves = new List<Curve>();
+            List<Rhino.Geometry.Curve> curves = new List<Rhino.Geometry.Curve>();
+            int id = 0;
 
             if (!DA.GetDataList(0, curves)) return;
+            if (!DA.GetData(1, ref id)) return;
 
             foreach (Curve curve in curves)
             {
@@ -110,17 +120,17 @@ namespace ClipperTwo
 
             resultCurve.Clear();
 
-            CurvesUnion(curves);
+            CurvesUnion(curves, id);
 
             DA.SetDataList(0, resultCurve);
         }
 
         List<Curve> resultCurve = new List<Curve>();
 
-        void CurvesUnion(List<Curve> curves)
+        void CurvesUnion(List<Rhino.Geometry.Curve> curves, int id)
         {
-            PathsD paths = Converter.ConvertPolylinesA(curves);
-            PathsD union = Clipper.Union(paths, null, FillRule.NonZero, precision);
+            PathsD paths = Converter.ConvertPolylinesA1(curves);
+            PathsD union = Clipper.Union(paths, null, FillType[id], precision);
             foreach (var path in union)
             {
                 Polyline polyline = new Polyline(path.Select(p => new Point3d(p.x, p.y, 0)));
@@ -128,6 +138,14 @@ namespace ClipperTwo
                 resultCurve.Add(polyline.ToNurbsCurve());
             }
         }
+
+        List<FillRule> FillType = new List<FillRule>()
+        {
+            FillRule.NonZero,
+            FillRule.EvenOdd,
+            FillRule.Negative,
+            FillRule.Positive
+        };
 
         protected override System.Drawing.Bitmap Icon => Properties.Resources.union;
 

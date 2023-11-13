@@ -76,7 +76,7 @@ namespace ClipperTwo
         {
             pManager.AddCurveParameter("Polylines", "", "", GH_ParamAccess.list);
             pManager.AddRectangleParameter("Rectangle", "", "", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("Convex", "", "", GH_ParamAccess.item, false);
+            //pManager.AddBooleanParameter("Convex", "", "", GH_ParamAccess.item, false);
 
             pManager[0].Optional = true;
             pManager[1].Optional = true;
@@ -91,7 +91,7 @@ namespace ClipperTwo
         {
             List<Curve> curves = new List<Curve>();
             Rectangle3d rectangle = Rectangle3d.Unset;
-            bool convexOnly = false;
+            //bool convexOnly = false;
 
             if (!DA.GetDataList(0, curves)) return;
             foreach (Curve curve in curves)
@@ -103,7 +103,7 @@ namespace ClipperTwo
                 }
             }
             if (!DA.GetData(1, ref rectangle)) return;
-            if (!DA.GetData(2, ref convexOnly)) return;
+            //if (!DA.GetData(2, ref convexOnly)) return;
 
             List<Curve> newcurves = new List<Curve>();
             var mirror = Transform.Mirror(Plane.WorldZX);
@@ -115,7 +115,7 @@ namespace ClipperTwo
                 newcurves.Add(curve);
             }
 
-            ClipShapesGh(newcurves, rectangle, convexOnly);
+            ClipShapesGh(newcurves, rectangle);
 
             List<Curve> newresultCurve = new List<Curve>();
             foreach (Curve curve in resultCurve)
@@ -129,15 +129,15 @@ namespace ClipperTwo
 
         List<Curve> resultCurve = new List<Curve>();
 
-        void ClipShapesGh(List<Curve> curves, Rectangle3d rectangle, bool convexOnly)
+        void ClipShapesGh(List<Curve> curves, Rectangle3d rectangle)
         {
             resultCurve.Clear();
 
-            PathsD paths = Converter.ConvertPolylinesA(curves);
+            PathsD paths = Converter.ConvertPolylinesA1(curves);
             RectD rect = Converter.ConvertRectangle(rectangle);
             PathsD cliprect;
 
-            cliprect = Clipper.ExecuteRectClip(rect, paths, precision, convexOnly);
+            cliprect = Clipper.RectClip(rect, paths, precision);
 
             foreach (var path in cliprect)
             {

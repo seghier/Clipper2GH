@@ -2,81 +2,91 @@
   "version": 3,
   "targets": {
     ".NETFramework,Version=v4.8": {
-      "Clipper2/1.2.2": {
+      "Clipper2/1.2.3": {
         "type": "package",
         "compile": {
           "lib/netstandard2.0/Clipper2Lib.dll": {}
         },
         "runtime": {
           "lib/netstandard2.0/Clipper2Lib.dll": {}
-        },
-        "contentFiles": {
-          "contentFiles/any/netstandard2.0/Clipper2.ico": {
-            "buildAction": "Content",
-            "codeLanguage": "any",
-            "copyToOutput": false
-          }
         }
       },
-      "Grasshopper/7.13.21348.13001": {
+      "Grasshopper/7.34.23267.11001": {
         "type": "package",
         "dependencies": {
-          "RhinoCommon": "[7.13.21348.13001]"
+          "RhinoCommon": "[7.34.23267.11001]"
         },
         "compile": {
-          "lib/net48/GH_IO.dll": {},
-          "lib/net48/Grasshopper.dll": {}
+          "lib/net48/GH_IO.dll": {
+            "related": ".XML"
+          },
+          "lib/net48/Grasshopper.dll": {
+            "related": ".xml"
+          }
         },
         "runtime": {
-          "lib/net48/_._": {}
+          "lib/net48/GH_IO.dll": {
+            "related": ".XML"
+          },
+          "lib/net48/Grasshopper.dll": {
+            "related": ".xml"
+          }
         },
         "build": {
-          "build/Grasshopper.targets": {}
+          "build/net48/Grasshopper.targets": {}
         }
       },
-      "RhinoCommon/7.13.21348.13001": {
+      "RhinoCommon/7.34.23267.11001": {
         "type": "package",
         "compile": {
-          "lib/net48/Eto.dll": {},
+          "lib/net48/Eto.dll": {
+            "related": ".xml"
+          },
           "lib/net48/Rhino.UI.dll": {},
-          "lib/net48/RhinoCommon.dll": {}
+          "lib/net48/RhinoCommon.dll": {
+            "related": ".XML"
+          }
         },
         "runtime": {
-          "lib/net48/_._": {}
+          "lib/net48/Eto.dll": {
+            "related": ".xml"
+          },
+          "lib/net48/Rhino.UI.dll": {},
+          "lib/net48/RhinoCommon.dll": {
+            "related": ".XML"
+          }
         },
         "build": {
-          "build/RhinoCommon.targets": {}
+          "build/net48/RhinoCommon.targets": {}
         }
       }
     }
   },
   "libraries": {
-    "Clipper2/1.2.2": {
-      "sha512": "q2Kd57Z8XVAuF7/qOK8cbAbJ72qq/IGQjCXGkHGpNEqF6E9ReEJm75xkY5GuYldoX3W+KY94dh1W4qB6eEwh0w==",
+    "Clipper2/1.2.3": {
+      "sha512": "0a9qFeQIe60XsZQEEt7CeAbsvs4ovt8lB4tQcCGbqdx4VMEjv+HUsKXpouy1nrX0zPa5hrBHQwNii9+e1JuOiA==",
       "type": "package",
-      "path": "clipper2/1.2.2",
+      "path": "clipper2/1.2.3",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "License.txt",
         "README.md",
-        "clipper2.1.2.2.nupkg.sha512",
+        "clipper2.1.2.3.nupkg.sha512",
         "clipper2.nuspec",
-        "content/Clipper2.ico",
-        "contentFiles/any/netstandard2.0/Clipper2.ico",
         "icon.png",
         "lib/netstandard2.0/Clipper2Lib.dll"
       ]
     },
-    "Grasshopper/7.13.21348.13001": {
-      "sha512": "XoxWouU2mzZAmj4kRP/ZqsKG+7e6Q+NBBitJSK/uxjuV8vNsGK2K19GW5ptDjjPuhd7GBI00KSB8Q1+JYFjELA==",
+    "Grasshopper/7.34.23267.11001": {
+      "sha512": "ukTyTb2Cpeigq4tkGrmXixpziiwF5dkgplV9Xj1rN9LGVLkZNzp1PWxvIEjQDFyjTiGfg/ZwMCRgDEXd+l2XNg==",
       "type": "package",
-      "path": "grasshopper/7.13.21348.13001",
+      "path": "grasshopper/7.34.23267.11001",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "build/Grasshopper.targets",
-        "grasshopper.7.13.21348.13001.nupkg.sha512",
+        "build/net48/Grasshopper.targets",
+        "grasshopper.7.34.23267.11001.nupkg.sha512",
         "grasshopper.nuspec",
         "grasshopper.png",
         "lib/net48/GH_IO.XML",
@@ -85,21 +95,21 @@
         "lib/net48/Grasshopper.xml"
       ]
     },
-    "RhinoCommon/7.13.21348.13001": {
-      "sha512": "JQdaNw61ddBqIe08E9O4N/grwrN1hjDHcYW7tWylwCZyFR7SepoCD4NS+6LN6+oSQhNbhLi9Bf+hQOFYFdRAEA==",
+    "RhinoCommon/7.34.23267.11001": {
+      "sha512": "FN4ocKMKcfFCgcUL9ryRFL6vGeWJH9O4NlXpwtAdg3zqeLWlkDFkPyn7qJ8bqStvSdiWd+6Mp1NEuxb4BVeDWA==",
       "type": "package",
-      "path": "rhinocommon/7.13.21348.13001",
+      "path": "rhinocommon/7.34.23267.11001",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "Eto-LICENSE.txt",
-        "build/RhinoCommon.targets",
+        "build/net48/RhinoCommon.targets",
         "lib/net48/Eto.dll",
         "lib/net48/Eto.xml",
         "lib/net48/Rhino.UI.dll",
         "lib/net48/RhinoCommon.XML",
         "lib/net48/RhinoCommon.dll",
-        "rhinocommon.7.13.21348.13001.nupkg.sha512",
+        "rhinocommon.7.34.23267.11001.nupkg.sha512",
         "rhinocommon.nuspec",
         "rhinocommon.png"
       ]
@@ -107,12 +117,13 @@
   },
   "projectFileDependencyGroups": {
     ".NETFramework,Version=v4.8": [
-      "Clipper2 >= 1.2.2",
-      "Grasshopper >= 7.13.21348.13001"
+      "Clipper2 >= 1.2.3",
+      "Grasshopper >= 7.34.23267.11001"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\archi\\.nuget\\packages\\": {}
+    "C:\\Users\\archi\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
@@ -123,8 +134,12 @@
       "packagesPath": "C:\\Users\\archi\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\archi\\source\\repos\\Clipper2GH\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
         "C:\\Users\\archi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -132,6 +147,7 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files (x86)\\Syncfusion\\Essential Studio\\WinUI\\23.1.36\\NuGetPackages": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -152,15 +168,14 @@
         "dependencies": {
           "Clipper2": {
             "target": "Package",
-            "version": "[1.2.2, )"
+            "version": "[1.2.3, )"
           },
           "Grasshopper": {
-            "include": "Compile, Build",
             "target": "Package",
-            "version": "[7.13.21348.13001, )"
+            "version": "[7.34.23267.11001, )"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.317\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.403\\RuntimeIdentifierGraph.json"
       }
     }
   }

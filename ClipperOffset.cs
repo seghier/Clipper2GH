@@ -6,6 +6,7 @@ using Rhino.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -21,6 +22,11 @@ namespace ClipperTwo
         }
 
         int precision = 4;
+        int svgWidth = 800;
+        int svgHeight = 600;
+        double thickness = 1;
+        Color color = Color.Black;
+        public string filename = "";
 
         public override void AppendAdditionalMenuItems(ToolStripDropDown menu)
         {
@@ -42,7 +48,7 @@ namespace ClipperTwo
             Label label = new Label
             {
                 Text = "Precision ",
-                AutoSize = true,
+                Width = 60,
                 Anchor = AnchorStyles.Right
             };
 
@@ -71,9 +77,193 @@ namespace ClipperTwo
                 precision = (int)numericUpDown.Value;
                 ExpireSolution(true);
             };
-
             #endregion
+
+            #region width
+            Menu_AppendSeparator(menu);
+
+            TableLayoutPanel tableLayoutPanelwidth = new TableLayoutPanel
+            {
+                ColumnCount = 2,
+                AutoSize = true,
+                Height = 30,
+                Width = 140,
+                AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                BackColor = Color.Transparent
+            };
+
+            Label widthlabel = new Label
+            {
+                Text = "Width ",
+                Width = 60,
+                Anchor = AnchorStyles.Right
+            };
+
+            NumericUpDown numericUpDownW = new NumericUpDown
+            {
+                Minimum = 100,
+                Maximum = 4000,
+                DecimalPlaces = 0,
+                Value = svgWidth,
+                Increment = 100,
+                Width = 60,
+                Anchor = AnchorStyles.Left
+            };
+
+            tableLayoutPanelwidth.Controls.Add(widthlabel, 0, 0);
+            tableLayoutPanelwidth.Controls.Add(numericUpDownW, 1, 0);
+            Menu_AppendCustomItem(menu, tableLayoutPanelwidth);
+
+            numericUpDownW.MouseWheel += (sender, e) =>
+            {
+                ((HandledMouseEventArgs)e).Handled = true;
+            };
+
+            numericUpDownW.ValueChanged += (sender, e) =>
+            {
+                svgWidth = (int)numericUpDownW.Value;
+                ExpireSolution(true);
+            };
+            #endregion
+
+            #region height
+            TableLayoutPanel tableLayoutPanelheight = new TableLayoutPanel
+            {
+                ColumnCount = 2,
+                AutoSize = true,
+                Height = 30,
+                Width = 140,
+                AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                BackColor = Color.Transparent
+            };
+
+            Label heightlabel = new Label
+            {
+                Text = "Height ",
+                Width = 60,
+                Anchor = AnchorStyles.Right
+            };
+
+            NumericUpDown numericUpDownH = new NumericUpDown
+            {
+                Minimum = 100,
+                Maximum = 4000,
+                DecimalPlaces = 0,
+                Value = svgHeight,
+                Increment = 100,
+                Width = 60,
+                Anchor = AnchorStyles.Left
+            };
+
+            tableLayoutPanelheight.Controls.Add(heightlabel, 0, 0);
+            tableLayoutPanelheight.Controls.Add(numericUpDownH, 1, 0);
+            Menu_AppendCustomItem(menu, tableLayoutPanelheight);
+
+            numericUpDownH.MouseWheel += (sender, e) =>
+            {
+                ((HandledMouseEventArgs)e).Handled = true;
+            };
+
+            numericUpDownH.ValueChanged += (sender, e) =>
+            {
+                svgHeight = (int)numericUpDownW.Value;
+                ExpireSolution(true);
+            };
+            #endregion
+
+            #region SVG Save Button
+
+            ToolStripButton saveAsSvgButton = new ToolStripButton
+            {
+                Text = "Save as SVG",
+                DisplayStyle = ToolStripItemDisplayStyle.ImageAndText,
+                TextAlign = ContentAlignment.MiddleCenter,
+                BackColor = Color.FromArgb(245, 245, 245),
+                AutoSize = false,
+                Width = 80,
+                Height = 24,
+                AutoToolTip = false,
+            };
+
+            // Handle the Paint event
+            saveAsSvgButton.Paint += (sender, e) =>
+            {
+                // Draw the rounded rectangle (border)
+                using (GraphicsPath path = GetRoundedRectangle(0, 0, saveAsSvgButton.Width - 1, saveAsSvgButton.Height - 1, 8))
+                using (Pen borderPen = new Pen(Color.Gray, 1))
+                {
+                    e.Graphics.DrawPath(borderPen, path);
+                }
+
+            };
+
+            saveAsSvgButton.Click += (sender, e) =>
+            {
+                using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+                {
+                    saveFileDialog.Filter = "SVG files (*.svg)|*.svg";
+                    saveFileDialog.FilterIndex = 1;
+                    saveFileDialog.RestoreDirectory = true;
+
+                    if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        filename = saveFileDialog.FileName;
+                        SvgWriter svg = new SvgWriter();
+                        SvgUtils.AddSolution(svg, svgpath, color, thickness, false);
+                        SvgUtils.SaveToFile(svg, filename, FillRule.EvenOdd, svgWidth, svgHeight, 20);
+                    }
+                }
+            };
+
+            menu.Items.Add(saveAsSvgButton);
+            #endregion
+
+            #region BIN Save Button
+            Menu_AppendSeparator(menu);
+
+            ToolStripButton saveAsBinButton = new ToolStripButton
+            {
+                Text = "Save as BIN",
+                DisplayStyle = ToolStripItemDisplayStyle.ImageAndText,
+                TextAlign = ContentAlignment.MiddleCenter,
+                BackColor = Color.FromArgb(245, 245, 245),
+                AutoSize = false,
+                Width = 80,
+                Height = 24,
+                AutoToolTip = false,
+            };
+
+            // Handle the Paint event
+            saveAsBinButton.Paint += (sender, e) =>
+            {
+                // Draw the rounded rectangle (border)
+                using (GraphicsPath path = GetRoundedRectangle(0, 0, saveAsBinButton.Width - 1, saveAsBinButton.Height - 1, 8))
+                using (Pen borderPen = new Pen(Color.Gray, 1))
+                {
+                    e.Graphics.DrawPath(borderPen, path);
+                }
+
+            };
+
+            saveAsBinButton.Click += SaveFile;
+            menu.Items.Add(saveAsBinButton);
+            #endregion
+
         }
+
+        private GraphicsPath GetRoundedRectangle(int x, int y, int width, int height, int radius)
+        {
+            GraphicsPath path = new GraphicsPath();
+
+            path.AddArc(x, y, radius * 2, radius * 2, 180, 90); // Top-left corner
+            path.AddArc(width - 2 * radius, y, radius * 2, radius * 2, 270, 90); // Top-right corner
+            path.AddArc(width - 2 * radius, height - 2 * radius, radius * 2, radius * 2, 0, 90); // Bottom-right corner
+            path.AddArc(x, height - 2 * radius, radius * 2, radius * 2, 90, 90); // Bottom-left corner
+            path.CloseFigure();
+
+            return path;
+        }
+
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
@@ -82,6 +272,7 @@ namespace ClipperTwo
             pManager.AddIntegerParameter("JoinType", "", "", GH_ParamAccess.item, 0);
             pManager.AddIntegerParameter("EndType", "", "", GH_ParamAccess.item, 0);
             pManager.AddNumberParameter("MiterLimit", "", "", GH_ParamAccess.item, 2);
+
             pManager[0].Optional = true;
             pManager[1].Optional = true;
 
@@ -89,7 +280,8 @@ namespace ClipperTwo
                 return;
             paramInteger1.AddNamedValue("Miter", 0);
             paramInteger1.AddNamedValue("Square", 1);
-            paramInteger1.AddNamedValue("Round", 2);
+            paramInteger1.AddNamedValue("Bevel", 2);
+            paramInteger1.AddNamedValue("Round", 3);
 
             if (!(pManager[3] is Param_Integer paramInteger2))
                 return;
@@ -104,6 +296,14 @@ namespace ClipperTwo
         {
             pManager.AddGenericParameter("Holes", "", "Holes bounds", GH_ParamAccess.list);
             pManager.AddGenericParameter("Outer", "", "Outer bounds", GH_ParamAccess.list);
+        }
+
+        PathsD pp = new PathsD();
+        PathsD svgpath = new PathsD();
+        protected override void BeforeSolveInstance()
+        {
+            pp.Clear();
+            svgpath = new PathsD();
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -130,37 +330,72 @@ namespace ClipperTwo
             if (!DA.GetData(4, ref miter)) return;
 
             endtype %= 5;
-            jointtype %= 3;
+            jointtype %= 4;
 
-            ClipperOffsetPoly(curves, distance*2, jointtype, endtype, miter);
+            ClipperOffsetPoly(curves, distance * 2, jointtype, endtype, miter);
 
-            //DA.SetDataList(0, resultCurve);
             DA.SetDataList(0, holeCurves);
             DA.SetDataList(1, outCurves);
         }
 
-        List<Curve> resultCurve = new List<Curve>();
         List<Curve> holeCurves = new List<Curve>();
         List<Curve> outCurves = new List<Curve>();
 
         void ClipperOffsetPoly(List<Curve> curves, double distance, int jointype, int endtype, double miterLimit)
         {
-            resultCurve.Clear();
             holeCurves.Clear();
             outCurves.Clear();
 
-            PathsD pathsD = Converter.ConvertPolylinesA(curves);
+            //PathsD pathsD = Converter.ConvertPolylinesA1(curves);
 
-            PathsD solutionD = new PathsD();
-            solutionD = Clipper.InflatePaths(pathsD, distance, JoinTypes[jointype], EndTypes[endtype], miterLimit, precision);
+            var result = Converter.ConvertPolylinesA2(curves);
+            PathsD closedPaths = result.closedPathsD;
+            PathsD openedPaths = result.openedPathsD;
+
+            //offset closed curves
+            PathsD solutionDA = new PathsD();
+            solutionDA = Clipper.InflatePaths(closedPaths, distance, JoinTypes[jointype], EndTypes[1], miterLimit, precision);
+
+            // offset opened curves
+            PathsD solutionDB = new PathsD();
+            solutionDB = Clipper.InflatePaths(openedPaths, distance, JoinTypes[jointype], EndTypes[endtype], miterLimit, precision);
+
+            PathsD solutionD = Clipper.Union(solutionDA, solutionDB, FillRule.EvenOdd, precision);
+
             foreach (PathD path in solutionD)
             {
+                PathD newPath = new PathD();
+
+                foreach (PointD point in path)
+                {
+                    newPath.Add(new PointD(point.x, -point.y));
+                }
+
                 Polyline polyline = new Polyline(path.Select(p => new Point3d(p.x, p.y, 0)));
                 polyline.Add(polyline[0]);
                 if (Clipper.IsPositive(path))
                     outCurves.Add(polyline.ToNurbsCurve());
                 else
                     holeCurves.Add(polyline.ToNurbsCurve());
+
+                pp.Add(path);
+                svgpath.Add(newPath);
+            }
+        }
+
+        void SaveFile(object sender, System.EventArgs e)
+        {
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+            {
+                saveFileDialog.Filter = "BIN files (*.bin)|*.bin";
+                saveFileDialog.FilterIndex = 1;
+                saveFileDialog.RestoreDirectory = true;
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    filename = saveFileDialog.FileName;
+                    Clipper2Lib.ClipperFileIO.SaveToBinFile(filename, pp);
+                }
             }
         }
 
@@ -168,7 +403,8 @@ namespace ClipperTwo
         {
             JoinType.Miter,
             JoinType.Square,
-            JoinType.Round,
+            JoinType.Bevel,
+            JoinType.Round
         };
 
         List<EndType> EndTypes = new List<EndType>()
@@ -189,12 +425,21 @@ namespace ClipperTwo
             if (reader.ItemExists("Precision"))
                 precision = reader.GetInt32("Precision");
 
+            if (reader.ItemExists("SVGWidth"))
+                svgWidth = reader.GetInt32("SVGWidth");
+
+            if (reader.ItemExists("SVGHeight"))
+                svgHeight = reader.GetInt32("SVGHeight");
+
             return base.Read(reader);
         }
 
         public override bool Write(GH_IWriter writer)
         {
             writer.SetInt32("Precision", precision);
+            writer.SetInt32("SVGWidth", svgWidth);
+            writer.SetInt32("SVGHeight", svgHeight);
+
             return base.Write(writer);
         }
     }

@@ -10,18 +10,28 @@
     <Copyright>Angus Johnson</Copyright>
     <PackageProjectUrl>http://www.angusj.com/clipper2</PackageProjectUrl>
     <RepositoryUrl>https://github.com/AngusJohnson/Clipper2</RepositoryUrl>
+    <BaseOutputPath>C:\Users\archi\AppData\Roaming\Grasshopper\Libraries\clipperTwo\</BaseOutputPath>
+    <SignAssembly>True</SignAssembly>
   </PropertyGroup>
 	
   <ItemGroup>
-    <Compile Remove="OffsetLegacy.cs" />
+    <Compile Remove="ClipperPoly.cs" />
+    <Compile Remove="ExportResult.cs" />
+    <Compile Remove="VariableOffset.cs" />
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Clipper2" Version="1.2.2" />
-    <PackageReference Include="Grasshopper" Version="7.13.21348.13001" IncludeAssets="compile;build" />
+    <PackageReference Include="Clipper2" Version="1.2.3" />
+    <PackageReference Include="Grasshopper" Version="7.34.23267.11001" />
   </ItemGroup>
   
   <ItemGroup>
+    <Reference Include="Clipper.FileIO">
+      <HintPath>Resources\Clipper.FileIO.dll</HintPath>
+    </Reference>
+    <Reference Include="Clipper2.SVG">
+      <HintPath>Resources\Clipper2.SVG.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   

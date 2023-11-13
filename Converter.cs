@@ -35,7 +35,7 @@ namespace ClipperTwo
             return rect;
         }
 
-        public static PathsD ConvertPolylinesA(List<Curve> curves)
+        public static PathsD ConvertPolylinesA1(List<Curve> curves)
         {
             PathsD pathsD = new PathsD();
 
@@ -51,6 +51,43 @@ namespace ClipperTwo
             return pathsD;
         }
 
+        public static (PathsD closedPathsD, PathsD openedPathsD) ConvertPolylinesA2(List<Curve> curves)
+        {
+            PathsD closedPathsD = new PathsD();
+            PathsD openedPathsD = new PathsD();
+
+            foreach (Curve curve in curves)
+            {
+                curve.TryGetPolyline(out Polyline polyline);
+
+                // Clone the polyline if it's closed to keep the original intact
+                Polyline modifiedPolyline = curve.IsClosed ? polyline.Duplicate() : polyline;
+
+                if (curve.IsClosed)
+                {
+                    modifiedPolyline.RemoveAt(modifiedPolyline.Count - 1);
+                }
+
+                if (modifiedPolyline.IsValid)
+                {
+                    PathD path = new PathD(modifiedPolyline.Select(point => new PointD(point.X, point.Y)));
+
+                    // Separate closed and open paths
+                    if (curve.IsClosed)
+                    {
+                        closedPathsD.Add(path);
+                    }
+                    else
+                    {
+                        openedPathsD.Add(path);
+                    }
+                }
+            }
+
+            return (closedPathsD, openedPathsD);
+        }
+
+
         public static PathsD ConvertPolylinesB(Curve curve)
         {
             Polyline polyline;
@@ -63,6 +100,17 @@ namespace ClipperTwo
             PathsD pathsD = new PathsD { path }; // Initialize PathsD with the path.
 
             return pathsD;
+        }
+
+        public static List<PointD> ConvertPointD(List<Point3d> points)
+        {
+            List<PointD> result = new List<PointD>();
+            foreach (Point3d point in points)
+            {
+                PointD pt = new PointD(point.X, point.Y);
+                result.Add(pt);
+            }
+            return result;
         }
     }
 }
