@@ -90,9 +90,9 @@ namespace ClipperTwo
         }
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddCurveParameter("PolylineA", "", "", GH_ParamAccess.item);
-            pManager.AddCurveParameter("PolylineB", "", "", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Operation", "", "", GH_ParamAccess.item, 0);
+            pManager.AddCurveParameter("PolylineA", "A", "", GH_ParamAccess.item);
+            pManager.AddCurveParameter("PolylineB", "B", "", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Operation", "O", "", GH_ParamAccess.item, 0);
             pManager[0].Optional = true;
             pManager[1].Optional = true;
 
@@ -106,7 +106,7 @@ namespace ClipperTwo
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Result", "", "Result", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Result", "r", "Result", GH_ParamAccess.list);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)

@@ -267,11 +267,11 @@ namespace ClipperTwo
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddCurveParameter("Polylines", "", "", GH_ParamAccess.list);
-            pManager.AddNumberParameter("Distance", "", "", GH_ParamAccess.item, 0.0);
-            pManager.AddIntegerParameter("JoinType", "", "", GH_ParamAccess.item, 0);
-            pManager.AddIntegerParameter("EndType", "", "", GH_ParamAccess.item, 0);
-            pManager.AddNumberParameter("MiterLimit", "", "", GH_ParamAccess.item, 2);
+            pManager.AddCurveParameter("Polylines", "P", "", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Distance", "D", "", GH_ParamAccess.item, 0.0);
+            pManager.AddIntegerParameter("JoinType", "JT", "", GH_ParamAccess.item, 0);
+            pManager.AddIntegerParameter("EndType", "ET", "", GH_ParamAccess.item, 0);
+            pManager.AddNumberParameter("MiterLimit", "L", "", GH_ParamAccess.item, 2);
 
             pManager[0].Optional = true;
             pManager[1].Optional = true;
@@ -294,8 +294,8 @@ namespace ClipperTwo
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Holes", "", "Holes bounds", GH_ParamAccess.list);
-            pManager.AddGenericParameter("Outer", "", "Outer bounds", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Holes", "H", "Holes bounds", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Outer", "O", "Outer bounds", GH_ParamAccess.list);
         }
 
         PathsD pp = new PathsD();

@@ -75,17 +75,17 @@ namespace ClipperTwo
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddCurveParameter("Polyline", "", "", GH_ParamAccess.item);
-            pManager.AddPointParameter("Points", "", "", GH_ParamAccess.list);
+            pManager.AddCurveParameter("Polyline", "P", "", GH_ParamAccess.item);
+            pManager.AddPointParameter("Points", "Pt", "", GH_ParamAccess.list);
             pManager[0].Optional = true;
             pManager[1].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddPointParameter("On", "", "", GH_ParamAccess.list);
-            pManager.AddPointParameter("Inside", "", "", GH_ParamAccess.list);
-            pManager.AddPointParameter("Outside", "", "", GH_ParamAccess.list);
+            pManager.AddPointParameter("On", "X", "", GH_ParamAccess.list);
+            pManager.AddPointParameter("Inside", "In", "", GH_ParamAccess.list);
+            pManager.AddPointParameter("Outside", "Out", "", GH_ParamAccess.list);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
