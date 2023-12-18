@@ -74,15 +74,15 @@ namespace ClipperTwo
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddCurveParameter("Lines", "", "", GH_ParamAccess.list);
-            pManager.AddRectangleParameter("Rectangle", "", "", GH_ParamAccess.item);
+            pManager.AddCurveParameter("Lines", "L", "", GH_ParamAccess.list);
+            pManager.AddRectangleParameter("Rectangle", "R", "", GH_ParamAccess.item);
             pManager[0].Optional = true;
             pManager[1].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Result", "", "Result", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Result", "r", "Result", GH_ParamAccess.list);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
